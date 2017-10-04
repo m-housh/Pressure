@@ -123,14 +123,22 @@ class PressureTests: XCTestCase {
         // There's some innaccuracies in these conversions, but get's close.
         // 
         let altitude = Length(1000, type: .feet)
-        let pressure = Pressure.forAltitude(altitude: altitude, asPressureType: .psi)
+        let pressure = Pressure.forAltitude(altitude: altitude, type: .psi)
+        // convenience - altitude for 1000 feet using default .psi as
+        // the pressure type returned
+        let p2 = Pressure.forAltitude(1000)
         XCTAssertEqual(14.15, round(pressure.value * 100) / 100)
+        XCTAssertEqual(14.15, round(p2.value * 100) / 100)
+
         
-        let pascals = Pressure.forAltitude(altitude: altitude, asPressureType: .pascals)
+        let pascals = Pressure.forAltitude(altitude: altitude, type: .pascals)
+        // convenience - altitude for 1000 feet using .pascals pressure
+        // type returned
+        let pascals2 = Pressure.forAltitude(1000, .pascals)
         XCTAssertEqual(98, round(pascals.value / 1000))
+        XCTAssertEqual(98, round(pascals2.value / 1000))
         
-        let zero = Length(0, type: .feet)
-        let sealevel = Pressure.forAltitude(altitude: zero)
+        let sealevel = Pressure.forAltitude(0.0)
         XCTAssertEqual(14.7, round(sealevel.value * 10) / 10)
     }
 

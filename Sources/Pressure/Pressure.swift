@@ -90,10 +90,23 @@ extension Pressure {
     // There are some inaccuricies due to rounding and conversions between
     // different measurements to come up with the value for the pressure
     // however it is pretty close.
-    static func forAltitude(altitude: Length, asPressureType pressureType: PressureType = .psi) -> Pressure {
+    
+    static func forAltitude(altitude: Length, type pressureType: PressureType = .psi) -> Pressure {
         let meters = altitude.convert(to: .meters).value
         let value = 101325 * pow((1 - 2.25577e-5 * meters), 5.525588)
         let pressure = Pressure(value, type: .pascals)
         return pressure.convert(to: pressureType)
+    }
+    
+    // convenience to get pressure for altitude at `feet` as `psi`
+    //
+    // The input (Double) is always used as `feet`.
+    //
+    // Example get the pressure for altitude in psi at 1000 feet:
+    //      Pressure.forAltitude(1000.0)
+    //      Pressure.forAltitude(1000.0, .pascals)  // 1000 feet in pascals (Pa)
+    static func forAltitude(_ altitude: Double, _ pressureType: PressureType = .psi) -> Pressure {
+        let length = Length(altitude, type: .feet)
+        return Pressure.forAltitude(altitude: length, type: pressureType)
     }
 }
