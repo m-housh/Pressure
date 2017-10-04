@@ -7,6 +7,8 @@
 // NOTES:  There are some rounding errors on certain conversions.
 //         However calculations are still accurate in most cases.
 
+import Foundation
+
 struct Pressure {
     
     let value: Double
@@ -79,5 +81,19 @@ extension Pressure: PressureConvertible {
         // we should possibly throw an error if the
         // value is 0.0
         return Pressure(value, type: pressureType)
+    }
+}
+
+// MARK: Pressure for altitude
+extension Pressure {
+    
+    // There are some inaccuricies due to rounding and conversions between
+    // different measurements to come up with the value for the pressure
+    // however it is pretty close.
+    static func forAltitude(altitude: Length, asPressureType pressureType: PressureType = .psi) -> Pressure {
+        let meters = altitude.convert(to: .meters).value
+        let value = 101325 * pow((1 - 2.25577e-5 * meters), 5.525588)
+        let pressure = Pressure(value, type: .pascals)
+        return pressure.convert(to: pressureType)
     }
 }

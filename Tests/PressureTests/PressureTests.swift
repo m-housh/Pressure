@@ -118,6 +118,17 @@ class PressureTests: XCTestCase {
         
         XCTAssertEqual("1.0 bar", bar.description)
     }
+    
+    func testPressureForAltitude() {
+        // There's some innaccuracies in these conversions, but get's close.
+        // 
+        let altitude = Length(1000, type: .feet)
+        let pressure = Pressure.forAltitude(altitude: altitude, asPressureType: .psi)
+        XCTAssertEqual(14.15, round(pressure.value * 100) / 100)
+        
+        let pascals = Pressure.forAltitude(altitude: altitude, asPressureType: .pascals)
+        XCTAssertEqual(98, round(pascals.value / 1000))
+    }
 
     static var allTests = [
         ("testConvertToPsiA", testConvertToPsiA),
