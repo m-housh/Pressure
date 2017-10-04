@@ -5,7 +5,7 @@
 //  Created by Michael Housh on 10/2/17.
 //
 
-enum PressureType {
+public enum PressureType {
     case psi, atmosphere, pascals, inchesWaterColumn, bar, torr
     
     var symbol: String {

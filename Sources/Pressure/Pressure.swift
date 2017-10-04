@@ -8,8 +8,9 @@
 //         However calculations are still accurate in most cases.
 
 import Foundation
+import Length
 
-struct Pressure {
+public struct Pressure {
     
     let value: Double
     let type: PressureType
@@ -24,7 +25,7 @@ struct Pressure {
 extension Pressure {
     // Pressures are considered equal if their value and type
     // are matching.
-    static func ==(lhs: Pressure, rhs: Pressure) -> Bool {
+    public static func ==(lhs: Pressure, rhs: Pressure) -> Bool {
         return lhs.value == rhs.value && lhs.type == rhs.type
     }
 }
@@ -32,7 +33,7 @@ extension Pressure {
 // MARK: CustomStringConvertible
 extension Pressure: CustomStringConvertible {
     // return the value with the pressure symbol
-    var description: String {
+    public var description: String {
         return "\(value) \(type.symbol)"
     }
 }
@@ -46,10 +47,8 @@ extension Pressure: PressureConvertible {
             return value * 0.068045957064302
         case .pascals:
             return value * 9.8692316931427e-6
-            //return value * 0.00014503773800722
         case .inchesWaterColumn:
             return value * 0.00245832
-            //return value * 0.036127291827354
         case .bar:
             return value * 0.98692316931427
         case .torr:
@@ -59,7 +58,7 @@ extension Pressure: PressureConvertible {
         }
     }
     
-    func convert(to pressureType: PressureType) -> Pressure {
+    public func convert(to pressureType: PressureType) -> Pressure {
         let value: Double
         
         switch pressureType {
@@ -71,15 +70,12 @@ extension Pressure: PressureConvertible {
             value = convertToAtmosphere() / 9.8692316931427e-6
         case .inchesWaterColumn:
              value = convertToAtmosphere() / 0.00245832
-            //value = convertToAtmosphere() / 0.036127291827354
         case .torr:
             value = convertToAtmosphere() / 0.0013157893594089
         case .bar:
             value = convertToAtmosphere() / 0.98692316931427
         }
         
-        // we should possibly throw an error if the
-        // value is 0.0
         return Pressure(value, type: pressureType)
     }
 }
@@ -91,11 +87,10 @@ extension Pressure {
     // different measurements to come up with the value for the pressure
     // however it is pretty close.
     
-    static func forAltitude(altitude: Length, type pressureType: PressureType = .psi) -> Pressure {
+    public static func forAltitude(altitude: Length, type pressureType: PressureType = .psi) -> Pressure {
         let meters = altitude.convert(to: .meters).value
-        let value = 101325 * pow((1 - 2.25577e-5 * meters), 5.525588)
-        let pressure = Pressure(value, type: .pascals)
-        return pressure.convert(to: pressureType)
+        let pressureInPascals = 101325 * pow((1 - 2.25577e-5 * meters), 5.525588)
+        return Pressure(pressureInPascals, type: .pascals).convert(to: pressureType)
     }
     
     // convenience to get pressure for altitude at `feet` as `psi`
@@ -105,8 +100,8 @@ extension Pressure {
     // Example get the pressure for altitude in psi at 1000 feet:
     //      Pressure.forAltitude(1000.0)
     //      Pressure.forAltitude(1000.0, .pascals)  // 1000 feet in pascals (Pa)
-    static func forAltitude(_ altitude: Double, _ pressureType: PressureType = .psi) -> Pressure {
-        let length = Length(altitude, type: .feet)
-        return Pressure.forAltitude(altitude: length, type: pressureType)
+    public static func forAltitude(_ feet: Double, _ pressureType: PressureType = .psi) -> Pressure {
+        let altitude = Length(feet, type: .feet)
+        return Pressure.forAltitude(altitude: altitude, type: pressureType)
     }
 }
