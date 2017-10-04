@@ -128,6 +128,10 @@ class PressureTests: XCTestCase {
         
         let pascals = Pressure.forAltitude(altitude: altitude, asPressureType: .pascals)
         XCTAssertEqual(98, round(pascals.value / 1000))
+        
+        let zero = Length(0, type: .feet)
+        let sealevel = Pressure.forAltitude(altitude: zero)
+        XCTAssertEqual(14.7, round(sealevel.value * 10) / 10)
     }
 
     static var allTests = [
